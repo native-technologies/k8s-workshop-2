@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: os-logger-daemon
+  labels:
+    app: os-logger
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: os-logger
+  template:
+    metadata:
+      labels:
+        app: os-logger
+    spec:
+      containers:
+        - name: os-logger
+          image: docker.io/nativetechnologies/osapp:latest
+          ports:
+            - containerPort: 8080

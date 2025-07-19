@@ -40,7 +40,66 @@ spec:
     spec:
       containers:
         - name: api-server
-          image: docker.io/nativetechnologies/orderapp:latest
+          image: docker.io/nativetechnologies/orderapp:1.1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: APP_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PORT
+              value: "8080"
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: api-server-config
+                  key: LOG_LEVEL
+            - name: BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: api-server-secret
+                  key: BASIC_AUTH_USERNAME
+            - name: BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-server-secret
+                  key: BASIC_AUTH_PASSWORD
+          # livenessProbe:
+          #   httpGet:
+          #     path: /ping
+          #     port: 8080
+---
+# statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: api-server-v2
+  labels:
+    app: api-server-v2
+spec:
+  replicas: 3
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: api-server-v2
+  template:
+    metadata:
+      labels:
+        app: api-server-v2
+    spec:
+      containers:
+        - name: api-server-v2
+          image: docker.io/nativetechnologies/orderapp:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -94,6 +153,19 @@ spec:
       nodePort: 30080
       targetPort: 8080
 ---
+# service.yaml for api-server-v2
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-server-v2-service
+spec:
+  selector:
+    app: api-server-v2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
 # ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -103,7 +175,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     # Force SSL redirect
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   tls:

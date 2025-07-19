@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: api-server
-          image: docker.io/nativetechnologies/orderapp:latest
+          image: docker.io/nativetechnologies/orderapp:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
         - name: ws-server
-          image: docker.io/nativetechnologies/wsapp:latest
+          image: docker.io/nativetechnologies/wsapp:1.2.0
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
@@ -149,7 +149,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     # Force SSL redirect
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   tls:

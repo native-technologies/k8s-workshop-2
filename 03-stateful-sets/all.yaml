@@ -23,7 +23,7 @@ metadata:
   labels:
     app: api-server
 spec:
-  replicas: 2
+  replicas: 3
   revisionHistoryLimit: 1
   strategy:
     type: RollingUpdate
@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: api-server
-          image: docker.io/nativetechnologies/orderapp:latest
+          image: docker.io/nativetechnologies/orderapp:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -87,7 +87,7 @@ metadata:
   labels:
     app: api-server-v2
 spec:
-  replicas: 2
+  replicas: 3
   revisionHistoryLimit: 1
   selector:
     matchLabels:
@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
         - name: api-server-v2
-          image: docker.io/nativetechnologies/orderapp:latest
+          image: docker.io/nativetechnologies/orderapp:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -160,7 +160,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     # Force SSL redirect
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   tls:

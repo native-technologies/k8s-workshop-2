@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: api-server
-          image: docker.io/nativetechnologies/orderapp:latest
+          image: docker.io/nativetechnologies/orderapp:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
